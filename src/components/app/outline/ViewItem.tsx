@@ -40,7 +40,7 @@ function ViewItem({ view, width, level = 0, renderExtra, expandIds, toggleExpand
   const selectedViewId = useAppViewId();
   const viewId = view.view_id;
   const selected = selectedViewId === viewId;
-  const { updatePage } = useAppHandlers();
+  const { updatePage, uploadFile } = useAppHandlers();
 
   const isExpanded = expandIds.includes(viewId);
   const [hovered, setHovered] = React.useState<boolean>(false);
@@ -57,21 +57,24 @@ function ViewItem({ view, width, level = 0, renderExtra, expandIds, toggleExpand
     /></span>;
   }, [isExpanded, level, toggleExpand, viewId]);
 
+  const onUploadFile = useCallback(async(file: File) => {
+    if(!uploadFile) return Promise.reject();
+    return uploadFile(viewId, file);
+  }, [uploadFile, viewId]);
+
   const renderItem = useMemo(() => {
     if(!view) return null;
-    const { layout } = view;
 
     return (
       <div
         style={{
           backgroundColor: selected ? 'var(--fill-list-hover)' : undefined,
-          cursor: view.layout === ViewLayout.AIChat ? 'not-allowed' : 'pointer',
+          cursor: 'pointer',
           paddingLeft: view.children?.length ? ((level * 16) + 'px') : ((level * 16) + 24) + 'px',
         }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         onClick={() => {
-          if(layout === ViewLayout.AIChat) return;
           onClickView?.(viewId);
         }}
         className={
@@ -167,6 +170,8 @@ function ViewItem({ view, width, level = 0, renderExtra, expandIds, toggleExpand
           onClose={() => {
             setIconPopoverAnchorEl(null);
           }}
+          uploadEnabled
+          onUploadFile={onUploadFile}
           popoverProps={popoverProps}
           onSelectIcon={(icon) => {
             if(icon.ty === ViewIconType.Icon) {
