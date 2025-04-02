@@ -1,7 +1,7 @@
 import { ViewLayout } from '@/application/types';
-import { ReactComponent as DuplicateIcon } from '@/assets/duplicate.svg';
-import { ReactComponent as MoveToIcon } from '@/assets/move_to.svg';
-import { ReactComponent as DeleteIcon } from '@/assets/trash.svg';
+import { ReactComponent as DuplicateIcon } from '@/assets/icons/duplicate.svg';
+import { ReactComponent as MoveToIcon } from '@/assets/icons/move_to.svg';
+import { ReactComponent as DeleteIcon } from '@/assets/icons/delete.svg';
 import { notify } from '@/components/_shared/notify';
 import { Origins } from '@/components/_shared/popover';
 import { useAppHandlers, useAppView, useCurrentWorkspaceId } from '@/components/app/app.hooks';
@@ -12,7 +12,7 @@ import { Button, CircularProgress } from '@mui/material';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-function MoreActionsContent({ itemClicked, viewId, movePopoverOrigins, onDeleted }: {
+function MoreActionsContent ({ itemClicked, viewId, movePopoverOrigins, onDeleted }: {
   itemClicked?: () => void;
   onDeleted?: () => void;
   viewId: string;
@@ -29,15 +29,15 @@ function MoreActionsContent({ itemClicked, viewId, movePopoverOrigins, onDeleted
   const {
     refreshOutline,
   } = useAppHandlers();
-  const handleDuplicateClick = async() => {
-    if(!workspaceId || !service) return;
+  const handleDuplicateClick = async () => {
+    if (!workspaceId || !service) return;
     setDuplicateLoading(true);
     try {
       await service.duplicateAppPage(workspaceId, viewId);
 
       void refreshOutline?.();
       // eslint-disable-next-line
-    } catch(e: any) {
+    } catch (e: any) {
       notify.error(e.message);
     } finally {
       setDuplicateLoading(false);
